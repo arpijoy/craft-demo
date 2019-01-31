@@ -1,0 +1,11 @@
+glue/models/BrownBagSessionDTO.class
+glue/configs/WebSocketConfig.class
+glue/models/BrownBagSessionDao.class
+glue/models/UserDTO.class
+glue/domain/User.class
+glue/service/NotificationService.class
+glue/models/UserDao.class
+glue/Application.class
+glue/configs/DatabaseConfig.class
+glue/Notification.class
+glue/configs/WebSecurityConfig.class

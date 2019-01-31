@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="sockjs-0.3.4.min.js"></script>
+<script src="stomp.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+</head>
+
+<body>
+	<!-- Navigation -->
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">Smart Social</a>
+			</div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="/logout">Log Out</a></li>
+					<li><a href="/rest">Test Some Rest APIs</a></li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container -->
+	</nav>
+	<div class="row">
+		<div class="col-lg-6">
+			<div class="panel panel-default">
+				<div class="panel-heading"></div>
+			</div>
+		</div>
+	</div>
+	<div id="page-wrapper">
+
+		<div class="row"></div>
+		<div class="col">
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<p th:inline="text">
+							You are logged as: <b>[[${#httpServletRequest.remoteUser}]]</b>
+						</p>
+
+					</div>
+				</div>
+				<br />
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="panel panel-default">
+					<!-- <div class="panel-heading">Stay In Touch</div> -->
+					<div class="panel-body">
+						<input id="do-some-action" type="button" value="Load Archive Chat Session" />
+						<!-- <a href="/bbsession">[Create New Session]</a>  <a href="/chatter">[Add
+							Message to Chatter]</a>-->
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+	<div class="row">
+
+		<div class="panel panel-warning">
+			<div class="col-lg-6">
+				<div class="panel panel-heading">
+					<p>Notifications (received on the web socket channel below):</p>
+				</div>
+				<div class="panel-body" id="notifications-area"></div>
+			</div>
+		</div>
+		<div class="panel panel-warning">
+			<div class="col-lg-6">
+				<div class="panel panel-heading">
+					<div class="form-group">
+						<!-- <form name='f' action='send-message' method='POST' role="form"> -->
+						<form name='f' action='send-message' method='POST' role="form">
+
+							<input type="hidden" name="senttime" value="today" /> <select
+								class="form-control" name='username' id="tousername">
+								<option>JackFrost</option>
+								<option>Dori</option>
+							</select>
+
+							<p th:inline="text">
+								Message: <input class="form-control" id="message" type="text"
+									name="message" />
+							</p>
+							<button type="submit" class="btn btn-default">Send</button>
+							<br /> <br />
+						</form>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Javascript functions -->
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script>
+		/**
+		 * Send an action to the server.
+		 */
+		function sendAction(event) {
+			event.preventDefault();
+			$.ajax({
+				url : "/some-action",
+				type : "POST"
+			});
+
+			return;
+		} // function sendAction
+
+		/**
+		 * Init operations.
+		 */
+		$(document).ready(function() {
+
+			// Bind the on-click event for the button element.
+			$("#do-some-action").on("click", sendAction);
+
+		});
+	</script>
+	<script>
+		/**
+		 * Open the web socket connection and subscribe the "/notify" channel.
+		 */
+		function connect() {
+
+			// Create and init the SockJS object
+			var socket = new SockJS('/ws');
+			var stompClient = Stomp.over(socket);
+
+			// Subscribe the '/notify' channell
+			stompClient.connect({}, function(frame) {
+				stompClient.subscribe('/user/queue/notify', function(
+						notification) {
+
+					// Call the notify function when receive a notification
+					notify(JSON.parse(notification.body).content);
+
+				});
+			});
+
+			return;
+		} // function connect
+
+		/**
+		 * Display the notification message.
+		 */
+		function notify(message) {
+			$("#notifications-area").append(message + "\n");
+			return;
+		}
+
+		/**
+		 * Init operations.
+		 */
+		$(document).ready(function() {
+
+			// Start the web socket connection.
+			connect();
+
+		});
+	</script>
+	<br />
+	<hr />
+</body>
+
+</html>

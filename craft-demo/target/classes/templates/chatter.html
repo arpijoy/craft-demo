@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="sockjs-0.3.4.min.js"></script>
+<script src="stomp.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+
+
+</head>
+
+<body onload='document.f.message.focus()'>
+<div id="page-wrapper">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Chatter (Uses RESTful API)</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <form name='f' action='create-chat-session' method='POST' role="form" >
+                <div class="form-group">
+                  <label>Message</label>
+                  <input class="form-control" type='text' name='message'/>
+
+                </div>
+
+               <div class="form-group">
+                  <label>To</label>
+                  <select class="form-control" name='toUser'>
+                    <option> JackFrost</option>
+                    <option> Dori</option>
+                    <option> All</option>
+                  </select>
+                </div>
+
+                <button type="submit" class="btn btn-default">Notify </button>
+                <button type="reset" class="btn btn-default">Reset </button>
+              </form>
+            </div>
+
+          </div>
+          <!-- /.row (nested) -->
+        </div>
+        <!-- /.panel-body -->
+      </div>
+      <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+  </div>
+  <!-- /.row -->
+</div>
+<!-- /#page-wrapper -->
+</body>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</html>

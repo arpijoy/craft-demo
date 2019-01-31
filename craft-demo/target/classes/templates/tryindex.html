@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+  <head>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="sockjs-0.3.4.min.js"></script>
+    <script src="stomp.min.js"></script>
+  </head>
+
+  <body>
+    <p th:inline="text">
+      You are logged as: <b>[[${#httpServletRequest.remoteUser}]]</b>
+      (<a href="/logout">logout</a>)
+    </p>
+    <p>
+      Click the button below to perform an action.
+      <br />
+      <strong>UserA</strong> will be notified via web socket.
+    </p>
+  
+    <input id="do-some-action" type="button" value="Send" />
+
+	<div>
+		<a href="#" id="text-id">Send Message</a>
+		<textarea id="source1" name="source1" rows="5" cols="20"></textarea>
+		
+	</div>
+
+    <!-- Javascript functions -->
+    <script>
+    var username = $("input#username").val();
+    var message = $("input#source1").val();  
+      /**
+       * Send an action to the server.
+       */
+      function sendAction(event) {
+        event.preventDefault();
+        $.ajax({
+          url: "/some-action",
+          type: "POST"
+        });
+        return;
+      } // function sendAction
+      
+      $("#text-id").on( 'click', function () {
+    
+    	    $.ajax({
+    	        type: 'post',
+    	        url: '/send-message',
+    	        data: {
+    	            username: $('#username').val()
+    	            message: $('#source1').val()
+    	        },
+    	        success: function( data ) {
+    	            console.log( data );
+    	        }
+    	    });
+    	});
+      
+      
+      /**
+       * Init operations.
+       */
+      $(document).ready(function() {
+        
+        // Bind the on-click event for the button element.
+        $("#do-some-action").on("click", sendAction);
+        
+      });
+
+      $(document).ready(function() {
+        
+        // Bind the on-click event for the button element.
+        $("#send-message").on("click", sendMessage);
+        
+      });
+    </script>
+
+  	<br />
+    <hr />
+   
+
+  </body>
+
+</html>

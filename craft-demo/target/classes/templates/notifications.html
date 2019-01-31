@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+  <head>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="sockjs-0.3.4.min.js"></script>
+    <script src="stomp.min.js"></script>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /> 
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+  </head>
+
+  <body>
+   <div class="row">
+<p th:inline="text">
+  You are logged as: <b>[[${#httpServletRequest.remoteUser}]]</b> (
+  <a href="/logout">logout</a>)
+</p>
+</div>
+<div class="row">
+  <div class="col-lg-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <p>
+          Notifications received on the web socket channel will be displayed below:
+        </p>
+      </div>
+      <div class="panel-body">
+        <textarea id="message-area" cols="60" rows="10" readonly="readonly"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Javascript functions -->
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+
+      /**
+       * Open the web socket connection and subscribe the "/notify" channel.
+       */
+      function connect() {
+
+        // Create and init the SockJS object
+        var socket = new SockJS('/ws');
+        var stompClient = Stomp.over(socket);
+
+        // Subscribe the '/notify' channell
+        stompClient.connect({}, function(frame) {
+          stompClient.subscribe('/user/queue/notify', function(notification) {
+
+            // Call the notify function when receive a notification
+            notify(JSON.parse(notification.body).content);
+
+          });
+        });
+        
+        return;
+      } // function connect
+      
+      /**
+       * Display the notification message.
+       */
+      function notify(message) {
+        $("#message-area").append(message + "\n");
+        return;
+      }
+      
+      /**
+       * Init operations.
+       */
+      $(document).ready(function() {
+        
+        // Start the web socket connection.
+        connect();
+        
+      });
+
+    </script>
+
+    <br />
+    <hr />
+   
+  </body>
+
+</html>
